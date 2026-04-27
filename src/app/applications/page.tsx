@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Shell, StatusBadge, formatCurrency, formatDate } from "@/components/Shell";
+import { Shell, StatusBadge, FlagPill, topSeverity, formatCurrency, formatDate } from "@/components/Shell";
 import { borrowers } from "@/lib/data";
 
 export default function ApplicationsPage() {
@@ -34,7 +34,7 @@ export default function ApplicationsPage() {
                 <tr className="hairline-b bg-[var(--color-surface-soft)]">
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Applicant</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Entity</th>
-                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Risk</th>
+                  <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Flags</th>
                   <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Income</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Documents</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Status</th>
@@ -55,11 +55,7 @@ export default function ApplicationsPage() {
                         {b.entityName ?? "—"}
                         <p className="text-[11px] text-[var(--color-muted)]">{b.entityType}</p>
                       </td>
-                      <td className={`px-4 py-3 text-right text-[14px] tabular font-display font-medium ${
-                        b.riskLevel === "low" ? "text-[var(--color-success)]" :
-                        b.riskLevel === "medium" ? "text-[var(--color-warning)]" :
-                        "text-[var(--color-danger)]"
-                      }`}>{b.riskScore}</td>
+                      <td className="px-4 py-3"><FlagPill count={b.flaggedIssues.length} severity={topSeverity(b.flaggedIssues)} /></td>
                       <td className="px-4 py-3 text-right text-[13px] tabular">{formatCurrency(b.annualIncome, { compact: true })}</td>
                       <td className="px-4 py-3 text-[12px]">
                         <div className="flex items-center gap-2">

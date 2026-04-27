@@ -50,6 +50,15 @@ const NAV: { label: string; href: string; icon: React.ReactNode }[] = [
     ),
   },
   {
+    label: "Demo & Journey",
+    href: "/demo",
+    icon: (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+  },
+  {
     label: "Documents",
     href: "/documents",
     icon: (
@@ -237,6 +246,37 @@ export function MetricCard({ label, value, delta, deltaTone, sub }: {
       </div>
     </div>
   );
+}
+
+export function FlagPill({ count, severity }: { count: number; severity?: "low" | "medium" | "high" | null }) {
+  if (count === 0) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[11px] font-medium bg-[var(--color-primary-tint)] text-[var(--color-primary)]">
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        Clear
+      </span>
+    );
+  }
+  const tone = severity === "high"
+    ? "bg-[#fdf2f2] text-[var(--color-danger)] border-[#f0d3d3]"
+    : severity === "medium"
+    ? "bg-[#fdf6ec] text-[var(--color-warning)] border-[#ecdcb8]"
+    : "bg-[var(--color-border-soft)] text-[var(--color-ink-soft)] border-[var(--color-border)]";
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[11px] font-medium border ${tone}`}>
+      <span className="text-[10px]">⚑</span>
+      {count} flag{count > 1 ? "s" : ""}
+    </span>
+  );
+}
+
+export function topSeverity(issues: { severity: "low" | "medium" | "high" }[]): "low" | "medium" | "high" | null {
+  if (issues.some((i) => i.severity === "high")) return "high";
+  if (issues.some((i) => i.severity === "medium")) return "medium";
+  if (issues.length > 0) return "low";
+  return null;
 }
 
 export function formatCurrency(n: number, opts: { compact?: boolean } = {}) {

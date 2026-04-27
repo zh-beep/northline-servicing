@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Shell, StatusBadge, formatCurrency } from "@/components/Shell";
+import { Shell, StatusBadge, FlagPill, topSeverity, formatCurrency } from "@/components/Shell";
 import { borrowers, searchBorrowers } from "@/lib/data";
 
 type View = "card" | "table";
@@ -87,10 +87,9 @@ export default function BorrowersPage() {
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Borrower</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Entity</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Status</th>
-                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Risk</th>
+                  <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Flags</th>
                   <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Outstanding</th>
                   <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Loans</th>
-                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Flags</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,14 +106,9 @@ export default function BorrowersPage() {
                       <p className="text-[11px] text-[var(--color-muted)]">{b.entityType}</p>
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={b.applicationStatus === "approved" ? "current" : b.applicationStatus === "declined" ? "default" : b.applicationStatus === "underwriting" ? "past_due" : "pending"} label={b.applicationStatus} /></td>
-                    <td className={`px-4 py-3 text-right text-[14px] tabular font-display font-medium ${riskColor(b.riskLevel)}`}>{b.riskScore}</td>
+                    <td className="px-4 py-3"><FlagPill count={b.flaggedIssues.length} severity={topSeverity(b.flaggedIssues)} /></td>
                     <td className="px-4 py-3 text-right text-[13px] tabular">{formatCurrency(b.totalOutstanding, { compact: true })}</td>
                     <td className="px-4 py-3 text-right text-[13px] tabular">{b.activeLoans}</td>
-                    <td className="px-4 py-3 text-right text-[13px] tabular">
-                      {b.flaggedIssues.length > 0
-                        ? <span className="text-[var(--color-danger)] font-medium">{b.flaggedIssues.length}</span>
-                        : <span className="text-[var(--color-muted)]">0</span>}
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -141,9 +135,8 @@ function BorrowerCard({ b }: { b: ReturnType<typeof searchBorrowers>[number] }) 
             <p className="text-[11px] text-[var(--color-muted)] truncate">{b.entityName} · {b.entityType}</p>
           </div>
         </div>
-        <div className="text-right shrink-0">
-          <p className="text-[10px] uppercase tracking-[0.1em] text-[var(--color-muted)]">Risk</p>
-          <p className={`font-display text-[20px] tabular font-medium leading-none mt-0.5 ${riskColor(b.riskLevel)}`}>{b.riskScore}</p>
+        <div className="shrink-0">
+          <FlagPill count={b.flaggedIssues.length} severity={topSeverity(b.flaggedIssues)} />
         </div>
       </div>
 
@@ -178,18 +171,7 @@ function BorrowerCard({ b }: { b: ReturnType<typeof searchBorrowers>[number] }) 
         }`}>
           BG: {b.backgroundCheck}
         </span>
-        {b.flaggedIssues.length > 0 && (
-          <span className="text-[11px] text-[var(--color-danger)] font-medium">
-            ⚑ {b.flaggedIssues.length} issue{b.flaggedIssues.length > 1 ? "s" : ""}
-          </span>
-        )}
       </div>
     </Link>
   );
-}
-
-function riskColor(level: string) {
-  return level === "low" ? "text-[var(--color-success)]"
-    : level === "medium" ? "text-[var(--color-warning)]"
-    : "text-[var(--color-danger)]";
 }

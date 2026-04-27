@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Shell, MetricCard, StatusBadge, formatCurrency, formatDate } from "@/components/Shell";
+import { Shell, MetricCard, StatusBadge, FlagPill, topSeverity, formatCurrency, formatDate } from "@/components/Shell";
 import { borrowers, getPortfolioStats } from "@/lib/data";
 
 export default function OverviewPage() {
@@ -180,14 +180,7 @@ export default function OverviewPage() {
                         <p className="text-[11px] text-[var(--color-muted)]">{b.flaggedIssues.length} flag{b.flaggedIssues.length === 1 ? "" : "s"} · {b.activeLoans} active loans · {formatCurrency(b.totalOutstanding, { compact: true })}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-muted)]">Risk</p>
-                      <p className={`text-[14px] font-display font-medium tabular ${
-                        b.riskLevel === "low" ? "text-[var(--color-success)]" :
-                        b.riskLevel === "medium" ? "text-[var(--color-warning)]" :
-                        "text-[var(--color-danger)]"
-                      }`}>{b.riskScore}</p>
-                    </div>
+                    <FlagPill count={b.flaggedIssues.length} severity={topSeverity(b.flaggedIssues)} />
                   </div>
                 </Link>
               ))}

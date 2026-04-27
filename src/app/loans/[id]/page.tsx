@@ -167,14 +167,13 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
                       <p className="text-[13px] font-medium">{g.name}</p>
                       <p className="text-[11px] text-[var(--color-muted)]">{g.relationship} · SSN {g.ssn}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-muted)]">Risk</p>
-                      <p className={`text-[16px] font-display font-medium tabular ${
-                        g.riskLevel === "low" ? "text-[var(--color-success)]" :
-                        g.riskLevel === "medium" ? "text-[var(--color-warning)]" :
-                        "text-[var(--color-danger)]"
-                      }`}>{g.riskScore}</p>
-                    </div>
+                    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[11px] font-medium border ${
+                      g.flagged
+                        ? "bg-[#fdf2f2] text-[var(--color-danger)] border-[#f0d3d3]"
+                        : "bg-[var(--color-primary-tint)] text-[var(--color-primary)] border-[var(--color-primary-soft)]"
+                    }`}>
+                      {g.flagged ? "⚑ Flagged" : "✓ Clear"}
+                    </span>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-4 text-[12px]">
                     <div>

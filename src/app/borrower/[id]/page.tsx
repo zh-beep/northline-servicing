@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { Shell, StatusBadge, MetricCard, formatCurrency, formatDate } from "@/components/Shell";
+import { Shell, StatusBadge, MetricCard, FlagPill, topSeverity, formatCurrency, formatDate } from "@/components/Shell";
 import { getBorrowerById } from "@/lib/data";
 
 export default function BorrowerProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -80,16 +80,12 @@ export default function BorrowerProfilePage({ params }: { params: Promise<{ id: 
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="text-right">
-                <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)]">Risk Score</p>
-                <p className={`font-display text-[44px] font-medium tabular leading-none mt-1 ${
-                  b.riskLevel === "low" ? "text-[var(--color-success)]" :
-                  b.riskLevel === "medium" ? "text-[var(--color-warning)]" :
-                  "text-[var(--color-danger)]"
-                }`}>{b.riskScore}</p>
-                <p className="text-[11px] text-[var(--color-muted)] mt-1 capitalize">{b.riskLevel} risk</p>
-              </div>
+            <div className="flex flex-col items-end gap-2">
+              <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)]">Account flags</p>
+              <FlagPill count={b.flaggedIssues.length} severity={topSeverity(b.flaggedIssues)} />
+              <p className="text-[11px] text-[var(--color-muted)] mt-1">
+                {b.flaggedIssues.length === 0 ? "Borrower in good standing" : `${b.flaggedIssues.filter((i) => i.severity === "high").length} high · ${b.flaggedIssues.filter((i) => i.severity === "medium").length} medium · ${b.flaggedIssues.filter((i) => i.severity === "low").length} low`}
+              </p>
             </div>
           </div>
         </div>
@@ -183,7 +179,6 @@ export default function BorrowerProfilePage({ params }: { params: Promise<{ id: 
                 <tr className="hairline-b bg-[var(--color-surface-soft)]">
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Name</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Relationship</th>
-                  <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Risk</th>
                   <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Their loans</th>
                   <th className="px-4 py-3 text-right text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Total guaranteed</th>
                   <th className="px-4 py-3 text-left text-[10px] uppercase tracking-[0.12em] text-[var(--color-muted)] font-medium">Guaranteeing</th>
@@ -195,11 +190,6 @@ export default function BorrowerProfilePage({ params }: { params: Promise<{ id: 
                   <tr key={g.name} className="hairline-b last:border-b-0">
                     <td className="px-4 py-3 text-[13px] font-medium">{g.name}</td>
                     <td className="px-4 py-3 text-[12px] text-[var(--color-ink-soft)]">{g.relationship}</td>
-                    <td className={`px-4 py-3 text-right text-[14px] tabular font-display font-medium ${
-                      g.riskLevel === "low" ? "text-[var(--color-success)]" :
-                      g.riskLevel === "medium" ? "text-[var(--color-warning)]" :
-                      "text-[var(--color-danger)]"
-                    }`}>{g.riskScore}</td>
                     <td className="px-4 py-3 text-right text-[13px] tabular">{g.outstandingLoans}</td>
                     <td className="px-4 py-3 text-right text-[13px] tabular">{formatCurrency(g.totalGuaranteed, { compact: true })}</td>
                     <td className="px-4 py-3 text-[12px] text-[var(--color-ink-soft)] font-mono">{g.guaranteeingLoans.join(", ")}</td>
